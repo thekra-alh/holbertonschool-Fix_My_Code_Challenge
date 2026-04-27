@@ -3,39 +3,30 @@
 
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
-    dlistint_t *current;
-    unsigned int i;
+    dlistint_t *temp = *head;
+    unsigned int i = 0;
 
-    if (head == NULL || *head == NULL)
+    if (!head || !*head)
         return (-1);
 
-    current = *head;
-    i = 0;
-
-    while (current != NULL && i < index)
+    while (temp && i < index)
     {
-        current = current->next;
+        temp = temp->next;
         i++;
     }
 
-    if (current == NULL)
+    if (!temp)
         return (-1);
 
-    /* If deleting the first node */
-    if (current->prev == NULL)
-    {
-        *head = current->next;
-        if (current->next != NULL)
-            current->next->prev = NULL;
-    }
+    /* Fix the links */
+    if (temp->prev)
+        temp->prev->next = temp->next;
     else
-    {
-        /* THIS IS THE KEY FIX - update next pointer, not prev */
-        current->prev->next = current->next;
-        if (current->next != NULL)
-            current->next->prev = current->prev;
-    }
+        *head = temp->next;
 
-    free(current);
+    if (temp->next)
+        temp->next->prev = temp->prev;
+
+    free(temp);
     return (1);
 }
